@@ -8,7 +8,7 @@ all_from 'lib/Jenkins/Setup.pm';
 author   q{Colin Newell <colin.newell@gmail.com>};
 license  'artistic2';
 
-perl_version 5.006;
+perl_version 5.010;
 
 tests_recursive('t');
 
@@ -29,8 +29,9 @@ build_requires (
 );
 
 requires (
-   #'ABC'              => 1.6,
-   #'Foo::Bar::Module' => 5.0401,
+   'CodeHacks' => 0,
+   'Jenkins::API' => 0,
+   'Jenkins::Config' => 0,
 );
 
 install_as_cpan;
