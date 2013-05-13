@@ -29,7 +29,9 @@ build_requires (
 );
 
 requires (
-   'CodeHacks' => 0,
+   'Moose' => 0,
+   'Parse::CPAN::Meta' => 0,
+   'Path::Tiny' => 0,
    'Jenkins::API' => 0,
    'Jenkins::Config' => 0,
 );

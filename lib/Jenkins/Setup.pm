@@ -22,7 +22,7 @@ sub setup_module
     my $self = shift;
     my $meta_filename = shift;
 
-    my $module = CodeHacks::META->new({ file_name => $meta_filename });
+    my $module = Jenkins::Setup::META->new({ file_name => $meta_filename });
     for my $key (qw/name repo_url repo_type/)
     {
         unless($module->$key)
@@ -69,6 +69,12 @@ C<repository> and C<name>.  If you want a sane choice of repository
 type you should really specify the repository type too along with
 the url.  The guessing of the type is really lame, so the least left
 to guess work the better.
+
+=head1 METHODS
+
+=head2 setup_module
+
+
 
 =head1 AUTHOR
 
