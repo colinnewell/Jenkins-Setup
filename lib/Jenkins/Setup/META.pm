@@ -121,8 +121,8 @@ Jenkins::Setup::META - Grab info from META.yml
 
 This class pulls basic distribution information from a META.yml.
 
-    my $module = CodeHacks::META->new({ 
-        file_name => "CodeHacks/META.yml" 
+    my $module = Jenkins::Setup::META->new({ 
+        meta_file_name => "CodeHacks/META.yml" 
     });
     $module->name; # CodeHacks
     $module->repo_url; # git://github.com/colinnewell/CodeHacks.git 
