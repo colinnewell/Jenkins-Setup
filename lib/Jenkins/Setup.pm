@@ -64,7 +64,7 @@ sub setup_module
     my $xml = $cb->to_xml($hash);
 
     my $jenkins = Jenkins::API->new({ base_url => $self->url });
-    die 'Jenkins not running on ' . $url unless $jenkins->check_jenkins_url;
+    die 'Jenkins not running on ' . $self->url unless $jenkins->check_jenkins_url;
     unless($jenkins->create_job($module->name, $xml))
     {
         $jenkins->set_project_config($module->name, $xml) || die 'Unable to set config';
