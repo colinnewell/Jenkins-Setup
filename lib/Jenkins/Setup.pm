@@ -5,8 +5,8 @@ use strict;
 use warnings FATAL => 'all';
 use Moose;
 use Jenkins::Config;
-use Jenkins::Setup::META;
 use Jenkins::API;
+use Carp;
 
 =head1 NAME
 
@@ -20,15 +20,25 @@ Version 0.01
 
 our $VERSION = '0.01';
 
-has url => (is => 'ro', isa => 'Str', required => 1);
+has url => (is => 'ro', isa => 'Str', required => 0);
 has meta_file => (is => 'ro', isa => 'Str', required => 1);
+has module => (is => 'ro', lazy_build => 1, builder => '_build_module');
+
+sub _build_module 
+{
+    my $self = shift;
+    require Jenkins::Setup::META;
+    my $module = Jenkins::Setup::META->new({ meta_file_name => $self->meta_file });
+    return $module;
+}
 
 
 sub setup_module
 {
     my $self = shift;
 
-    my $module = Jenkins::Setup::META->new({ meta_file_name => $self->meta_file });
+    croak 'Must specify url' unless $self->url;
+    my $module = $self->module;
     my $deps = $module->local_deps;
     for my $key (qw/name repo_url repo_type/)
     {

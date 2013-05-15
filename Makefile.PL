@@ -36,6 +36,8 @@ requires (
    'Jenkins::Config' => 0,
 );
 
+install_script 'bin/jenkins_setup.pl';
+install_script 'bin/test_with_deps.pl';
 install_as_cpan;
 auto_install;
 WriteAll;
