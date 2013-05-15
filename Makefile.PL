@@ -16,7 +16,7 @@ resources (
    #homepage   => 'http://yourwebsitehere.com',
    #IRC        => 'irc://irc.perl.org/#Jenkins-Setup',
    license    => 'http://www.perlfoundation.org/artistic_license_2_0',
-   #repository => 'git://github.com/Colin Newell/Jenkins-Setup.git',
+   repository => 'ssh://git-server/srv/git/Jenkins-Setup',
    bugtracker => 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=Jenkins-Setup',
 );
 

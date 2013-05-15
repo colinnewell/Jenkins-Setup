@@ -28,7 +28,7 @@ sub setup_module
 {
     my $self = shift;
 
-    my $module = Jenkins::Setup::META->new({ file_name => $self->meta_file });
+    my $module = Jenkins::Setup::META->new({ meta_file_name => $self->meta_file });
     my $deps = $module->local_deps;
     for my $key (qw/name repo_url repo_type/)
     {

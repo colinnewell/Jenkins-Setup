@@ -85,7 +85,7 @@ sub _build_name
 sub _build_local_deps
 {
     my $self = shift;
-    my $path = File::Spec->rel2abs($self->file_name);
+    my $path = File::Spec->rel2abs($self->meta_file_name);
     my ($vol, $dir, $file) = File::Spec->splitpath($path);
     my $proper_path = File::Spec->catpath($vol, $dir);
     my @local;
