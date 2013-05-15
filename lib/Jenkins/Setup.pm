@@ -20,9 +20,14 @@ Version 0.01
 
 our $VERSION = '0.01';
 
-has url => (is => 'ro', isa => 'Str', required => 0);
 has meta_file => (is => 'ro', isa => 'Str', required => 1);
+
 has module => (is => 'ro', lazy_build => 1, builder => '_build_module');
+
+has url => (is => 'ro', isa => 'Str');
+has perl_location => (is => 'ro', isa => 'Str', default => '/opt/perl5/bin');
+# latest jenkins appears to be organised like this,
+has workspace_dir => (is => 'ro', isa => 'Str', default => '../../$project/workspace/lib');
 
 sub _build_module 
 {
