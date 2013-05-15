@@ -4,6 +4,9 @@ use 5.010;
 use strict;
 use warnings FATAL => 'all';
 use Moose;
+use Jenkins::Config;
+use Jenkins::Setup::META;
+use Jenkins::API;
 
 =head1 NAME
 
@@ -17,12 +20,16 @@ Version 0.01
 
 our $VERSION = '0.01';
 
+has url => (is => 'ro', isa => 'Str', required => 1);
+has meta_file => (is => 'ro', isa => 'Str', required => 1);
+
+
 sub setup_module
 {
     my $self = shift;
-    my $meta_filename = shift;
 
-    my $module = Jenkins::Setup::META->new({ file_name => $meta_filename });
+    my $module = Jenkins::Setup::META->new({ file_name => $self->meta_file });
+    my $deps = $module->local_deps;
     for my $key (qw/name repo_url repo_type/)
     {
         unless($module->$key)
@@ -30,24 +37,41 @@ sub setup_module
             die "Unable to setup module in jenkins because we are missing the $key";
         }
     }
-
-    my @local_deps = $self->_guess_local_deps($module->dependencies);
-}
-
-sub _guess_local_deps
-{
-    my $self = shift;
-    my $deps = shift;
-    for my $dep (@$deps)
+    my $cb = Jenkins::Config->new();
+    my $hash = $cb->default_project;
+    $hash->{description} = $module->abstract;
+    # FIXME: add svn support
+    if($module->repo_type eq 'git')
     {
-        # FIXME: normalize path relative to META.yml
-        my $path = $dep =~ s/::/-/gr;
-        if(-d "../$path") 
-        {
-            print "$dep - $path\n";
-        }
+        $hash->{scm}->{userRemoteConfigs}->{'hudson.plugins.git.UserRemoteConfig'}->{url} = $module->repo_url;
     }
+    my $shell_commands = $hash->{builders}->{'hudson.tasks.Shell'};
+    if(@$deps)
+    {
+        my $cpan_line = $shell_commands->[1]->{command};
+        my $lib = join ':', map { "../$_/lib" } @$deps;
+        $cpan_line = sprintf "PERL5LIB=%s %s", $lib, $cpan_line;
+        $shell_commands->[1]->{command} = $cpan_line;
+        print "$cpan_line\n";
+        my $prove_line = $shell_commands->[2]->{command};
+        my $deps = join ' ', map { "-I ../$_/lib" } @$deps;
+        $prove_line =~ s|(/opt/perl5/bin/prove)|$1 $deps|;
+        print "$prove_line\n";
+        $shell_commands->[2]->{command} = $prove_line;
+    }
+    # FIXME: add dependencies.
+
+    my $xml = $cb->to_xml($hash);
+
+    my $jenkins = Jenkins::API->new({ base_url => $self->url });
+    die 'Jenkins not running on ' . $url unless $jenkins->check_jenkins_url;
+    unless($jenkins->create_job($module->name, $xml))
+    {
+        $jenkins->set_project_config($module->name, $xml) || die 'Unable to set config';
+    }
+    print "Project created\n";
 }
+
 
 =head1 SYNOPSIS
 
