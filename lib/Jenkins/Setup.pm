@@ -64,13 +64,14 @@ sub setup_module
     if(@$deps)
     {
         my $cpan_line = $shell_commands->[1]->{command};
-        my $lib = join ':', map { "../$_/lib" } @$deps;
+        my $lib = join ':', map { $self->workspace_dir =~ s/\$project/$_/gr } @$deps;
         $cpan_line = sprintf "PERL5LIB=%s %s", $lib, $cpan_line;
         $shell_commands->[1]->{command} = $cpan_line;
         print "$cpan_line\n";
         my $prove_line = $shell_commands->[2]->{command};
-        my $deps = join ' ', map { "-I ../$_/lib" } @$deps;
-        $prove_line =~ s|(/opt/perl5/bin/prove)|$1 $deps|;
+        my $deps = join ' ', map { '-I ' . $self->workspace_dir =~ s/\$project/$_/gr } @$deps;
+        my $perl_location = $self->perl_location;
+        $prove_line =~ s|(/opt/perl5/bin/prove)|$perl_location/prove $deps|;
         print "$prove_line\n";
         $shell_commands->[2]->{command} = $prove_line;
     }
