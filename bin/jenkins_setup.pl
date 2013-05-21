@@ -1,15 +1,36 @@
 #!/usr/bin/perl
 
 use Modern::Perl;
+use Getopt::Std;
 
 use Jenkins::Setup;
 
-# FIXME: add command line parsing or something.
-my $url = shift;
-die 'Must specify jenkins url' unless $url;
-my $meta = shift;
-die 'Must specify META.yml' unless $meta;
+sub usage
+{
+    my $error = shift;
+    print $error, "\n" if $error;
+    print "Usage $0 -u http://jenkins:8080 [-m META.yml] [-w '../\$project/lib']\n";
+    exit 1;
+}
 
-my $app = Jenkins::Setup->new({ meta_file => $meta, url => $url });
+my %opts;
+getopts('u:m:w:h', \%opts);
+# FIXME: add command line parsing or something.
+usage if $opts{h};
+my $url = $opts{u};
+usage('Must specify jenkins url') unless $url;
+my $meta = $opts{m} || 'META.yml';
+usage('Can not find META file') unless -f $meta;
+
+my $params = { 
+    meta_file => $meta, 
+    url => $url 
+};
+if($opts{w})
+{
+    $params->{workspace_dir} = $opts{w};
+}
+
+my $app = Jenkins::Setup->new($params);
 $app->setup_module();
 
