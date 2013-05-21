@@ -15,7 +15,6 @@ sub usage
 
 my %opts;
 getopts('u:m:w:h', \%opts);
-# FIXME: add command line parsing or something.
 usage if $opts{h};
 my $url = $opts{u};
 usage('Must specify jenkins url') unless $url;
