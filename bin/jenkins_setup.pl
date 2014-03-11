@@ -15,7 +15,6 @@ sub usage
 
 my %opts;
 getopts('u:m:w:p:U:h', \%opts);
-# FIXME: add command line parsing or something.
 usage if $opts{h};
 my $url = $opts{u};
 my $username = $opts{U};
