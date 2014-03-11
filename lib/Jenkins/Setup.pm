@@ -25,6 +25,8 @@ has meta_file => (is => 'ro', isa => 'Str', required => 1);
 has module => (is => 'ro', lazy_build => 1, builder => '_build_module');
 
 has url => (is => 'ro', isa => 'Str');
+has username => (is => 'ro', isa => 'Str');
+has password => (is => 'ro', isa => 'Str');
 has perl_location => (is => 'ro', isa => 'Str', default => '/opt/perl5/bin');
 # latest jenkins appears to be organised like this,
 has workspace_dir => (is => 'ro', isa => 'Str', default => '../../$project/workspace/lib');
@@ -79,7 +81,13 @@ sub setup_module
 
     my $xml = $cb->to_xml($hash);
 
-    my $jenkins = Jenkins::API->new({ base_url => $self->url });
+    my $config = { base_url => $self->url };
+    if($self->username && $self->password)
+    {
+        $config->{username} = $self->username;
+        $config->{password} = $self->password;
+    }
+    my $jenkins = Jenkins::API->new($config);
     die 'Jenkins not running on ' . $self->url unless $jenkins->check_jenkins_url;
     unless($jenkins->create_job($module->name, $xml))
     {
