@@ -86,8 +86,8 @@ sub setup_module
     my $config = { base_url => $self->url };
     if($self->username && $self->password)
     {
-        $config->{username} = $self->username;
-        $config->{password} = $self->password;
+        $config->{api_key} = $self->username;
+        $config->{api_pass} = $self->password;
     }
     my $jenkins = Jenkins::API->new($config);
     die 'Jenkins not running on ' . $self->url unless $jenkins->check_jenkins_url;
