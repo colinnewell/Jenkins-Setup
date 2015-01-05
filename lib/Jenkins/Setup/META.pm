@@ -107,7 +107,21 @@ sub _build_local_deps
             }
         }
     }
-    return \@local;
+    my %paths = map { $_ => 1 } @local;
+    for my $path (@local)
+    {
+        my $meta_file = File::Spec->join('..', $path, 'META.yml');
+        if(-f $meta_file)
+        {
+            my $module = Jenkins::Setup::META->new({meta_file_name =>  $meta_file });
+            for my $path (@{$module->local_deps})
+            {
+                $paths{$path} = 1;
+            }
+        }
+    }
+    my @paths = keys %paths;
+    return \@paths;
 }
 
 no Moose;
