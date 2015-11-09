@@ -28,6 +28,7 @@ has url => (is => 'ro', isa => 'Str');
 has username => (is => 'ro', isa => 'Str');
 has password => (is => 'ro', isa => 'Str');
 has perl_location => (is => 'ro', isa => 'Str', default => '/opt/perl5/bin');
+has locallib_location => (is => 'ro', isa => 'Str', default => 'perl5');
 # latest jenkins appears to be organised like this,
 has workspace_dir => (is => 'ro', isa => 'Str', default => '../../$project/workspace/lib');
 has email_recipient => (is => 'ro', isa => 'Str');
@@ -68,15 +69,21 @@ sub setup_module
     my $shell_commands = $hash->{builders}->{'hudson.tasks.Shell'};
     if(@$deps)
     {
+        my $locallib = $self->locallib_location;
+        my $perl_location = $self->perl_location;
+        $shell_commands->[0]->{command} =~ s|~/perl5|~/$locallib|;
+        $shell_commands->[0]->{command} =~ s|/opt/perl5/bin|$perl_location|;
         my $cpan_line = $shell_commands->[1]->{command};
         my $lib = join ':', map { $self->workspace_dir =~ s/\$project/$_/gr } @$deps;
+        $cpan_line =~ s|~/perl5|~/$locallib|;
+        $cpan_line =~ s|/opt/perl5/bin|$perl_location|;
         $cpan_line = sprintf "PERL5LIB=%s %s", $lib, $cpan_line;
         $shell_commands->[1]->{command} = $cpan_line;
         print "$cpan_line\n";
         my $prove_line = $shell_commands->[2]->{command};
         my $deps = join ' ', map { '-I ' . $self->workspace_dir =~ s/\$project/$_/gr } @$deps;
-        my $perl_location = $self->perl_location;
         $prove_line =~ s|(/opt/perl5/bin/prove)|$perl_location/prove $deps|;
+        $prove_line =~ s|/var/lib/jenkins/perl5|/var/lib/jenkins/$locallib|g;
         print "$prove_line\n";
         $shell_commands->[2]->{command} = $prove_line;
     }
