@@ -10,6 +10,8 @@ is $module->repo_type, 'git';
 is $module->abstract, 'Scripts for the lazy programmer';
 my @deps = sort @{$module->dependencies};
 my @expected = sort qw/
+    ExtUtils::MakeMaker
+    Test::More
     File::ShareDir
     File::Slurp
     Modern::Perl
