@@ -47,16 +47,13 @@ sub _build_repo_type
     }
     unless($type)
     {
-        given($self->repo_url)
+        if($self->repo_url =~ /git/)
         {
-            when(/git/) # wow this is crude
-            {
-                $type = 'git';
-            }
-            when(/svn/) # this too 
-            {
-                $type = 'svn';
-            }
+            $type = 'git';
+        } 
+        elsif ($self->repo_url =~ /svn/)
+        {
+            $type = 'svn';
         }
     }
     return $type;
