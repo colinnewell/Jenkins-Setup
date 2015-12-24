@@ -58,6 +58,7 @@ sub setup_module
     my $cb = Jenkins::Config->new();
     my $hash = $cb->default_project;
     $hash->{description} = $module->abstract;
+    $hash->{publishers}->{'hudson.tasks.Mailer'}->{sendToIndividuals} = 'true';
     $hash->{publishers}->{'hudson.tasks.Mailer'}->{recipients} = $self->email_recipient;
     # FIXME: add svn support
     if($module->repo_type eq 'git')
