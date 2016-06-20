@@ -34,6 +34,8 @@ requires (
    'Path::Tiny' => 0,
    'Jenkins::API' => 0,
    'Jenkins::Config' => 0,
+   'Modern::Perl' => 0,
+   'Getopt::Std' => 0,
 );
 
 install_script 'bin/jenkins_setup.pl';
