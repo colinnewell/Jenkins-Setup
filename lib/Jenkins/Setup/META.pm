@@ -63,8 +63,11 @@ sub _build_dependencies
 {
     my $self = shift;
     my $dependencies = $self->_meta->{requires};
-    return [] unless $dependencies;
-    return [keys %$dependencies];
+    my $build_dependencies = $self->_meta->{build_requires};
+    my @deps;
+    push @deps, keys %$dependencies if $dependencies;
+    push @deps, keys %$build_dependencies if $build_dependencies;
+    return \@deps;
 }
 
 sub _build_abstract

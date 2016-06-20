@@ -14,7 +14,7 @@ sub usage
 }
 
 my %opts;
-getopts('e:u:m:w:p:U:h', \%opts);
+getopts('e:u:m:w:p:U:h:P:', \%opts);
 usage if $opts{h};
 my $url = $opts{u};
 my $username = $opts{U};
@@ -31,6 +31,11 @@ my $params = {
 if($opts{w})
 {
     $params->{workspace_dir} = $opts{w};
+}
+if($opts{P})
+{
+    $params->{perl_location} = sprintf("/opt/%s/bin", $opts{P});
+    $params->{locallib_location} = $opts{P};
 }
 if($username && $password)
 {
